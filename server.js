@@ -28,22 +28,19 @@ app.get('/bad', (request, response) => {
 app.get('/location', locationHandler);
 
 
-
 // Route Handler: location
 function locationHandler(request, response) {
-  // const geoData = require('./data/geo.json');
   const city = request.query.city;
 
   const url = 'https://us1.locationiq.com/v1/search.php';
   superagent.get(url)
     .query({
       key: process.env.GEO_KEY,
-      q: city, // query
+      q: city, 
       format: 'json'
     })
     .then(locationResponse => {
       let geoData = locationResponse.body;
-      // console.log(geoData);
 
       const location = new Location(city, geoData);
       response.send(location);
@@ -60,7 +57,7 @@ app.get('/weather', weatherHandler);
 function weatherHandler(request, response) {
   const weatherData = require('./data/darksky.json');
   const weatherResults = [];
-  weatherData.daily.data.forEach(dailyWeather => {
+  weatherData.daily.data.map(dailyWeather => {
     weatherResults.push(new Weather(dailyWeather));
   });
   response.send(weatherResults);
@@ -99,6 +96,6 @@ function Location(city, geoData) {
 
 // Weather
 function Weather(weatherData) {
-  this.forcast = weatherData.summary;
+  this.forecast = weatherData.summary;
   this.time = new Date(weatherData.time * 1000);
 }
