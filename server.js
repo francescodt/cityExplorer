@@ -55,14 +55,16 @@ app.get('/weather', weatherHandler);
 // Route Handler: weather
 
 function weatherHandler(request, response) {
+  const latitude = request.query.latitude;
+  const longitude = request.query.longitude;
   const weather = request.query.search_query;
-  const url = 'http://api.weatherbit.io/v2.0/current';
+  const url = 'https://api.weatherbit.io/v2.0/forecast/daily';
 
   superagent.get(url)
     .query({
+      lat: latitude,
+      lon: longitude,
       key: process.env.WEATHER_KEY,
-      city: weather,
-      format: 'json'
     })
     .then(weatherResponse => {
       let weatherData = weatherResponse.body;
