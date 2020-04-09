@@ -112,7 +112,6 @@ app.use(notFoundHandler);
 app.use(errorHandler); // Error Middleware
 
 // Helper Functions
-
 function errorHandler(error, request, response, next) {
   console.log(error);
   response.status(500).json({
