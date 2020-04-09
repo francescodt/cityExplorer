@@ -4,7 +4,7 @@
 **Version**: 1.0.∞ 
 
 ## Overview
-Creating a site that will take 
+City explorer is a front end site that will return events, reviews for local places, and things happening like the weather for a specific latitude and longitude based on user input. 
 
 ## Getting Started
 <!-- What are the steps that a user must take in order to build this app on their own machine and get it running? -->
