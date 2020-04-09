@@ -79,6 +79,7 @@ function weatherHandler(request, response) {
     })
 }
 
+
 // Has to happen after everything else
 app.use(notFoundHandler);
 // Has to happen after the error might have occurred
