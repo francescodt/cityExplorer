@@ -110,9 +110,11 @@ function Location(city, geoData) {
 
 // Weather
 function Weather(weatherData) {
-  this.forecast = weatherData.summary;
-  this.time = new Date(weatherData.time * 1000).toDateString();
-}
+  this.forecast = weatherData.weather.description;
+  this.time = new Date(weatherData.valid_date).toDateString();
+} //this.forecast = weatherData.summary;
+// this.time = new Date(weatherData.time * 1000).toDateString();
+
 
 // Make sure the server is listening for requests
 app.listen(PORT, () => console.log(`App is listening on ${PORT}`));
