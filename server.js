@@ -140,6 +140,7 @@ function weatherHandler(request, response) {
     })
 }
 
+
 app.get('/trails', trailHandler);
 
 function trailHandler(request, response) {
