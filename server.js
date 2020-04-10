@@ -35,6 +35,34 @@ app.get('/bad', (request, response) => {
 // Add /location route
 app.get('/location', locationHandler);
 
+function getLocationFromCache(city) {
+  const SQL = `
+  Select *
+  FROM locations
+  WHERE search_query = $1;`
+  
+  let values = [city];
+  return client.query(SQL, values)
+    .then(results => {
+      return results;
+    })
+    .catch(err => {
+      console.log(err);
+    });
+}
+
+function setLocationInCache (city, location) {
+  let setSQL = `INSERT INTO locations (search_query, formatted_query, latitude, longitude) VALUES ($1, $2, $3, $4) RETURNING *;`
+  let values = [location.search_query, location.formatted_query, location.latitude, location.longitude];
+  return client.query(setSQL, values)
+    .then(results => {
+      console.log(results)
+      return results;
+    })
+    .catch(err => {
+      console.log(err);
+    });
+};
 
 // Route Handler: location
 function locationHandler(request, response) {
@@ -145,8 +173,7 @@ function Location(city, geoData) {
 function Weather(weatherData) {
   this.forecast = weatherData.weather.description;
   this.time = new Date(weatherData.valid_date).toDateString();
-} //this.forecast = weatherData.summary;
-// this.time = new Date(weatherData.time * 1000).toDateString();
+}
 
 function Trails(trailsData) {
   this.name = trailsData.name;
@@ -159,7 +186,6 @@ function Trails(trailsData) {
   this.conditions = trailsData.conditionDetails;
   this.condition_date = new Date(trailsData.conditionDate).toDateString();
 }
-
 
 // Make sure the server is listening for requests
 app.listen(PORT, () => console.log(`App is listening on ${PORT}`));
