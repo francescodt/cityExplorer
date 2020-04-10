@@ -11,16 +11,15 @@ const superagent = require('superagent');
 const pg = require('pg');
 
 //DB connection setup
-if (!process.env.DATABASE_URL) { throw 'Missing DATABASE_URL'};
+if (!process.env.DATABASE_URL) 
+  { throw 'Missing DATABASE_URL'};
+
 const client = new pg.Client(process.env.DATABASE_URL);
 client.on('error', err => { throw err; });
 
 // Application Setup
 const PORT = process.env.PORT || 3003;
 const app = express();
-
-const client = new pg.Client(process.env.DATABASE_URL);
-client.on('error', err => {throw err; });
 
 app.use(cors()); // Middleware
 
@@ -43,9 +42,9 @@ function setLocationInCache (city, location) {
   VALUES ($1, $2, $3, $4) 
   RETURNING *
   `;
-  const values = [search_query, formatted_query, latitude, longitude];
+  const parameters = [search_query, formatted_query, latitude, longitude];
   
-  return client.query(setSQL, values)
+  return client.query(SQL, parameters)
     .then(results => {
       console.log(results)
       return results;
@@ -63,8 +62,8 @@ function getLocationFromCache(city) {
   LIMIT 1
   `;
   
-  let values = [city];
-  return client.query(SQL, values)
+  let parameters = [city];
+  return client.query(SQL, parameters)
     .then(results => {
       return results;
     })
@@ -76,9 +75,22 @@ function getLocationFromCache(city) {
 // Route Handler: location
 function locationHandler(request, response) {
   const city = request.query.city;
+
+  getLocationFromCache(city)
+    .then(result => {
+      let {rowCount, rows } = result;
+      if (rowCount > 0) {
+        response.send(rows[0])
+      } else {
+        return getLocationFromApi(city, response);
+      }
+    })
+}
+
+function getLocationFromApi(city, response) {
   const url = 'https://us1.locationiq.com/v1/search.php';
 
-  superagent.get(url)
+  return superagent.get(url)
     .query({
       key: process.env.GEO_KEY,
       q: city, 
@@ -87,7 +99,11 @@ function locationHandler(request, response) {
     .then(locationResponse => {
       let geoData = locationResponse.body;
       const location = new Location(city, geoData);
-      response.send(location);
+      
+      setLocationInCache(location)
+        .then(() => {
+          return response.send(location);
+        });
     })
     .catch(err => {
       console.log(err);
