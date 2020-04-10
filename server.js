@@ -47,7 +47,6 @@ function setLocationInCache (city, location) {
   return client.query(SQL, parameters)
     .then(results => {
       console.log(results)
-      return results;
     })
     .catch(err => {
       console.log(err);
@@ -63,13 +62,7 @@ function getLocationFromCache(city) {
   `;
   
   let parameters = [city];
-  return client.query(SQL, parameters)
-    .then(results => {
-      return results;
-    })
-    .catch(err => {
-      console.log(err);
-    });
+   return client.query(SQL, parameters)
 }
 
 // Route Handler: location
@@ -100,7 +93,7 @@ function getLocationFromApi(city, response) {
       let geoData = locationResponse.body;
       const location = new Location(city, geoData);
       
-      setLocationInCache(location)
+      setLocationInCache(city, location)
         .then(() => {
           return response.send(location);
         });
@@ -214,4 +207,14 @@ function Trails(trailsData) {
 }
 
 // Make sure the server is listening for requests
-app.listen(PORT, () => console.log(`App is listening on ${PORT}`));
+// app.listen(PORT, () => console.log(`App is listening on ${PORT}`));
+
+//Client connect
+client.connect()
+  .then(() => {
+    console.log('Database connected.');
+    app.listen(PORT, () => console.log(`Listening on ${PORT}`));
+  })
+  .catch(error => {
+    throw `Something went wrong: ${error}`;
+  });
