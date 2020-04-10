@@ -32,6 +32,15 @@ app.get('/bad', (request, response) => {
 });
 
 
+// Add /weather route and require it
+const weatherHandler = require('./modules/weather');
+app.get('/weather', weatherHandler);
+// Route Handler: weather
+
+const trailHandler = require('./modules/trails');
+app.get('/trails', trailHandler);
+
+
 // Add /location route
 app.get('/location', locationHandler);
 
@@ -103,14 +112,6 @@ function getLocationFromApi(city, response) {
       errorHandler(err, request, response);
     });
 }
-
-// Add /weather route and require it
-const weatherHandler = require('./modules/weather');
-app.get('/weather', weatherHandler);
-// Route Handler: weather
-
-const trailHandler = require('./modules/trails');
-app.get('/trails', trailHandler);
 
 
 // Has to happen after everything else
