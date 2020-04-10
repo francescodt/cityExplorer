@@ -36,12 +36,32 @@ app.get('/bad', (request, response) => {
 // Add /location route
 app.get('/location', locationHandler);
 
+function setLocationInCache (city, location) {
+  const {search_query, formatted_query, latitude, longitude} = location;
+  const SQL = `
+  INSERT INTO locations (search_query, formatted_query, latitude, longitude) 
+  VALUES ($1, $2, $3, $4) 
+  RETURNING *
+  `;
+  const values = [search_query, formatted_query, latitude, longitude];
+  
+  return client.query(setSQL, values)
+    .then(results => {
+      console.log(results)
+      return results;
+    })
+    .catch(err => {
+      console.log(err);
+    });
+};
+
 function getLocationFromCache(city) {
   const SQL = `
   Select *
   FROM locations
-  WHERE search_query = $1;
-  `
+  WHERE search_query = $1
+  LIMIT 1
+  `;
   
   let values = [city];
   return client.query(SQL, values)
@@ -52,19 +72,6 @@ function getLocationFromCache(city) {
       console.log(err);
     });
 }
-
-function setLocationInCache (city, location) {
-  let setSQL = `INSERT INTO locations (search_query, formatted_query, latitude, longitude) VALUES ($1, $2, $3, $4) RETURNING *;`
-  let values = [location.search_query, location.formatted_query, location.latitude, location.longitude];
-  return client.query(setSQL, values)
-    .then(results => {
-      console.log(results)
-      return results;
-    })
-    .catch(err => {
-      console.log(err);
-    });
-};
 
 // Route Handler: location
 function locationHandler(request, response) {
