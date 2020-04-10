@@ -10,13 +10,14 @@ const cors = require('cors');
 const superagent = require('superagent');
 const pg = require('pg');
 
+//DB connection setup
+if (!process.env.DATABASE_URL) { throw 'Missing DATABASE_URL'};
+const client = new pg.Client(process.env.DATABASE_URL);
+client.on('error', err => { throw err; });
+
 // Application Setup
 const PORT = process.env.PORT || 3003;
 const app = express();
-
-if (!process.env.DATABASE_URL) {
-  throw 'Missing DATABASE_URL';
-}
 
 const client = new pg.Client(process.env.DATABASE_URL);
 client.on('error', err => {throw err; });
@@ -39,7 +40,8 @@ function getLocationFromCache(city) {
   const SQL = `
   Select *
   FROM locations
-  WHERE search_query = $1;`
+  WHERE search_query = $1;
+  `
   
   let values = [city];
   return client.query(SQL, values)
