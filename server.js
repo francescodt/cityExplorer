@@ -63,13 +63,6 @@ function notFoundHandler(request, response) {
   });
 }
 
-function Location(city, geoData) {
-  this.search_query = city; // "cedar rapids"
-  this.formatted_query = geoData[0].display_name; // "Cedar Rapids, Iowa"
-  this.latitude = parseFloat(geoData[0].lat);
-  this.longitude = parseFloat(geoData[0].lon);
-}
-
 
 //Client connect
 client.connect()
