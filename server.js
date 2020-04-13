@@ -34,6 +34,7 @@ app.get('/bad', (request, response) => {
 // Add routes and require it
 const weatherHandler = require('./modules/weather');
 const trailHandler = require('./modules/trails');
+const locationHandler = require('./modules/location');
 
 
 
