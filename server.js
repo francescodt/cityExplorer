@@ -32,17 +32,18 @@ app.get('/bad', (request, response) => {
 });
 
 
-// Add /weather route and require it
+// Add routes and require it
 const weatherHandler = require('./modules/weather');
-app.get('/weather', weatherHandler);
-// Route Handler: weather
-
 const trailHandler = require('./modules/trails');
+
+
+
+app.get('/weather', weatherHandler);
 app.get('/trails', trailHandler);
-
-
-// Add /location route
 app.get('/location', locationHandler);
+
+app.use(notFoundHandler);
+app.use(errorHandler); // Error Middleware
 
 function setLocationInCache (city, location) {
   const {search_query, formatted_query, latitude, longitude} = location;
@@ -114,10 +115,6 @@ function getLocationFromApi(city, response) {
 }
 
 
-// Has to happen after everything else
-app.use(notFoundHandler);
-// Has to happen after the error might have occurred
-app.use(errorHandler); // Error Middleware
 
 // Helper Functions
 function errorHandler(error, request, response, next) {
